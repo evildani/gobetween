@@ -1,0 +1,48 @@
+#
+# gobetween.toml - salt test config file
+#
+#### This is in ns
+client_idle_timeout =  10000000        # Client inactivity duration before forced connection drop
+backend_idle_timeout = 10000000
+
+[logging]
+level = "debug"    # "debug" | "info" | "warn" | "error"
+output = "stdout" # "stdout" | "stderr" | "/path/to/gobetween.log"
+format = "text"   # (optional) "text" | "json"
+
+[profiler]
+enabled = false 
+
+[api]
+enabled = true 
+bind = ":8888"
+cors = false
+    [api.basic_auth]
+    login = "admin"
+    password = "1111"
+
+
+[servers.default]
+protocol = "vxlan"
+bind = "0.0.0.0:4789"
+max_connections = 0              # Maximum simultaneous connections to the server
+##### If client_idle_timeout or backend_idle_timeout VXLAN sessions are never removed
+client_idle_timeout = "1000000"        # Nano Sec, Client inactivity duration before forced connection drop
+backend_idle_timeout = "1000000"       # Nano Sec, Backend inactivity duration before forced connection drop
+backend_connection_timeout = "0" # Backend connection timeout (ignored in udp)
+
+    [servers.default.discovery]
+    kind = "static"
+    static_list = [
+        "100.10.1.28:4789 weight=25 priority=1",
+        "100.10.0.35:4789 weight=25 priority=1",
+        "100.10.2.37:4789 weight=25 priority=1",
+        "100.10.0.239:4789 weight=25 priority=1",
+    ]
+
+    [servers.default.vxlan]             # (optional)
+    max_requests  = 0                 # (optional) if > 0 accepts no more requests than max_requests and closes session
+    max_responses = 0                 # (optional) if > 0 accepts no more responses than max_responses from backend and closes session
+    transparent = false               # (optional, not supported in Windows)
+
+

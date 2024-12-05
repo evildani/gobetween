@@ -1,0 +1,43 @@
+#
+# gobetween.toml - salt test config file
+#
+
+[logging]
+level = "info"    # "debug" | "info" | "warn" | "error"
+output = "stdout" # "stdout" | "stderr" | "/path/to/gobetween.log"
+format = "text"   # (optional) "text" | "json"
+
+[profiler]
+enabled = true 
+bind = ":6060" 
+
+
+[api]
+enabled = false 
+bind = ":8888"
+cors = false
+    [api.basic_auth]
+    login = "admin"
+    password = "1111"
+
+[servers.default]
+protocol = "vxlan"
+bind = "0.0.0.0:4789"
+max_connections = 0              # Maximum simultaneous connections to the server
+client_idle_timeout =  "30000000000"        # Client inactivity duration before forced connection drop
+backend_idle_timeout = "30000000000"       # Backend inactivity duration before forced connection drop
+backend_connection_timeout = "1000000" # Backend connection timeout (ignored in udp)
+
+    [servers.default.discovery]
+    kind = "static"
+    static_list = [
+        "172.27.4.85:4789 weight=50 priority=1",
+        "172.27.4.87:4789 weight=50 priority=1",
+    ]
+
+    [servers.default.vxlan]             # (optional)
+    max_requests  = 0                 # (optional) if > 0 accepts no more requests than max_requests and closes session
+    max_responses = 0                 # (optional) if > 0 accepts no more responses than max_responses from backend and closes session
+    transparent = false               # (optional, not supported in Windows)
+    source = "172.27.7.61" 
+
