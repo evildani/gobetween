@@ -14,7 +14,7 @@
 
 **gobetween** -  modern & minimalistic load balancer and reverse-proxy for the :cloud: Cloud era.
 
-**Current status**: *Maintenance mode, accepting PRs*. Currently in use in several highly loaded production environments.
+Fork version of the original with some added features, sorry provided as is with no suport.
 
 ## Features
 
@@ -22,7 +22,8 @@
   * **TCP** - with optional [The PROXY Protocol](https://github.com/yyyar/gobetween/wiki/Proxy-Protocol) support
   * **TLS** - [TLS Termination](https://github.com/yyyar/gobetween/wiki/Protocols#tls) + [ACME](https://github.com/yyyar/gobetween/wiki/Protocols#tls) & [TLS Proxy](https://github.com/yyyar/gobetween/wiki/Tls-Proxying)
   * **UDP** - with optional virtual sessions and transparent mode
-
+  * **vxlan*** - 1 to many, Based on the original packet header load balance among many udp sockets that support vxlan
+  * **Geneve*** - 1 to many, AWS Geneve implementation receiver that will load balance among many vxlan sockets.
 
 * [Clear & Flexible Configuration](https://github.com/yyyar/gobetween/wiki/Configuration) with [TOML](config/gobetween.toml) or [JSON](config/gobetween.json)
   * **File** - read configuration from the file
