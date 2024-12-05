@@ -10,16 +10,15 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/manager"
-	"github.com/yyyar/gobetween/stats"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/manager"
+	"github.com/notional-labs/gobetween/src/stats"
 )
 
 /**
  * Attaches /servers handlers
  */
 func attachServers(app *gin.RouterGroup) {
-
 	/**
 	 * Find all current configured servers
 	 */
@@ -40,7 +39,7 @@ func attachServers(app *gin.RouterGroup) {
 	 */
 	app.DELETE("/servers/:name", func(c *gin.Context) {
 		name := c.Param("name")
-		manager.Delete(name)
+		manager.Delete(name) //nolint:errcheck
 		c.IndentedJSON(http.StatusOK, nil)
 	})
 
@@ -48,7 +47,6 @@ func attachServers(app *gin.RouterGroup) {
 	 * Create new server with name :name
 	 */
 	app.POST("/servers/:name", func(c *gin.Context) {
-
 		name := c.Param("name")
 
 		cfg := config.Server{}
@@ -72,5 +70,4 @@ func attachServers(app *gin.RouterGroup) {
 		name := c.Param("name")
 		c.IndentedJSON(http.StatusOK, stats.GetStats(name))
 	})
-
 }

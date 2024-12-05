@@ -46,7 +46,6 @@ func (t TcpContext) Sni() string {
  * Proxy udp context
  */
 type UdpContext struct {
-
 	/**
 	 * Current client remote address
 	 */
@@ -67,4 +66,68 @@ func (u UdpContext) Port() int {
 
 func (u UdpContext) Sni() string {
 	return ""
+}
+
+/*
+ * Proxy VXLAN udp context
+ */
+type VXlanContext struct {
+	/**
+	 * Inside UDP packet the VXland IP/TCP packet is located
+	 */
+	ClientAddr net.UDPAddr
+	//Hash       string
+	Hash uint64
+}
+
+/*
+ * Proxy Geneve udp context
+ */
+type GeneveContext struct {
+	/**
+	 * Inside UDP packet the Geneve IP/TCP packet is located
+	 */
+	ClientAddr net.UDPAddr
+	//Hash       string
+	Hash uint64
+}
+
+func (x VXlanContext) Ip() net.IP {
+	return x.ClientAddr.IP
+}
+
+func (x VXlanContext) Port() int {
+	return x.ClientAddr.Port
+}
+
+func (x VXlanContext) Sni() string {
+	return ""
+}
+
+func (x VXlanContext) String() string {
+	return x.ClientAddr.String()
+}
+
+func (x VXlanContext) hash() uint64 {
+	return x.Hash
+}
+
+func (x GeneveContext) Ip() net.IP {
+	return x.ClientAddr.IP
+}
+
+func (x GeneveContext) Port() int {
+	return x.ClientAddr.Port
+}
+
+func (x GeneveContext) Sni() string {
+	return ""
+}
+
+func (x GeneveContext) String() string {
+	return x.ClientAddr.String()
+}
+
+func (x GeneveContext) hash() uint64 {
+	return x.Hash
 }

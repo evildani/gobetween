@@ -8,6 +8,7 @@ package manager
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"regexp"
 	"strconv"
@@ -15,13 +16,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/server"
-	"github.com/yyyar/gobetween/service"
-	"github.com/yyyar/gobetween/utils/codec"
-	"github.com/yyyar/gobetween/utils/profiler"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/server"
+	"github.com/notional-labs/gobetween/src/service"
+	"github.com/notional-labs/gobetween/src/utils/codec"
+	"github.com/notional-labs/gobetween/src/utils/profiler"
 )
 
 /* Map of app current servers */
@@ -43,7 +44,6 @@ var originalCfg config.Config
  * Initialize manager from the initial/default configuration
  */
 func Initialize(cfg config.Config) {
-
 	log := logging.For("manager")
 	log.Info("Initializing...")
 
@@ -53,10 +53,10 @@ func Initialize(cfg config.Config) {
 	defaults = cfg.Defaults
 	initDefaults()
 
-	//Initialize global sections
+	// Initialize global sections
 	initConfigGlobals(&cfg)
 
-	//create services
+	// create services
 	services = service.All(cfg)
 
 	// Go through config and start servers for each server
@@ -74,7 +74,7 @@ func Initialize(cfg config.Config) {
 }
 
 func initDefaults() {
-	//defaults
+	// defaults
 	if defaults.MaxConnections == nil {
 		defaults.MaxConnections = new(int)
 	}
@@ -96,8 +96,7 @@ func initDefaults() {
 }
 
 func initConfigGlobals(cfg *config.Config) {
-
-	//acme
+	// acme
 	if cfg.Acme != nil {
 		if cfg.Acme.Challenge == "" {
 			cfg.Acme.Challenge = "http"
@@ -130,7 +129,6 @@ func initProfiler(cfg *config.Config) {
  * the config file
  */
 func DumpConfig(format string) (string, error) {
-
 	originalCfg.Servers = map[string]config.Server{}
 
 	servers.RLock()
@@ -166,7 +164,6 @@ func All() map[string]config.Server {
  * Returns server configuration by name
  */
 func Get(name string) interface{} {
-
 	servers.RLock()
 	server, ok := servers.m[name]
 	servers.RUnlock()
@@ -182,7 +179,6 @@ func Get(name string) interface{} {
  * Create new server and launch it
  */
 func Create(name string, cfg config.Server) error {
-
 	servers.Lock()
 	defer servers.Unlock()
 
@@ -196,7 +192,6 @@ func Create(name string, cfg config.Server) error {
 	}
 
 	server, err := server.New(name, c)
-
 	if err != nil {
 		return err
 	}
@@ -221,7 +216,6 @@ func Create(name string, cfg config.Server) error {
  * Delete server stopping all active connections
  */
 func Delete(name string) error {
-
 	servers.Lock()
 	defer servers.Unlock()
 
@@ -234,7 +228,7 @@ func Delete(name string) error {
 	delete(servers.m, name)
 
 	for _, s := range services {
-		s.Disable(server)
+		s.Disable(server) //nolint:errcheck
 	}
 
 	return nil
@@ -244,7 +238,6 @@ func Delete(name string) error {
  * Returns stats for the server
  */
 func Stats(name string) interface{} {
-
 	servers.Lock()
 	server := servers.m[name]
 	servers.Unlock()
@@ -257,7 +250,6 @@ func Stats(name string) interface{} {
  * TODO: make validation better
  */
 func prepareConfig(name string, server config.Server, defaults config.ConnectionOptions) (config.Server, error) {
-
 	/* ----- Prerequisites ----- */
 
 	if server.Bind == "" {
@@ -277,11 +269,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 	}
 
 	switch server.Healthcheck.Kind {
-	case
-		"ping",
-		"probe",
-		"exec",
-		"none":
+	case "ping", "probe", "exec", "none":
 	default:
 		return config.Server{}, errors.New("Not supported healthcheck type " + server.Healthcheck.Kind)
 	}
@@ -395,10 +383,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 		}
 
 		switch server.Sni.UnexpectedHostnameStrategy {
-		case
-			"default",
-			"reject",
-			"any":
+		case "default", "reject", "any":
 		default:
 			return config.Server{}, errors.New("Not supported sni unexprected hostname strategy " + server.Sni.UnexpectedHostnameStrategy)
 		}
@@ -408,9 +393,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 		}
 
 		switch server.Sni.HostnameMatchingStrategy {
-		case
-			"exact",
-			"regexp":
+		case "exact", "regexp":
 		default:
 			return config.Server{}, errors.New("Not supported sni matching " + server.Sni.HostnameMatchingStrategy)
 		}
@@ -433,11 +416,9 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 	}
 
 	if server.Tls != nil {
-
 		if (len(server.Tls.AcmeHosts) == 0) && ((server.Tls.KeyPath == "") || (server.Tls.CertPath == "")) {
 			return config.Server{}, errors.New("tls requires specify either acme hosts or both key and cert paths")
 		}
-
 	}
 
 	/* ----- Connections params and overrides ----- */
@@ -462,9 +443,45 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 		}
 
 		if server.Udp.MaxRequests == 0 && server.Udp.MaxResponses == 0 && server.ClientIdleTimeout == nil && server.BackendIdleTimeout == nil {
+			println("UDP Config for server: ", server.Udp.MaxRequests, server.Udp.MaxResponses, server.ClientIdleTimeout, server.BackendIdleTimeout)
 			return config.Server{}, errors.New("udp protocol requires to specify at least one of (client|backend)_idle_timeout, udp.max_requests, udp.max_responses")
 		}
-
+	case "vxlan":
+		if server.BackendsTls != nil {
+			return config.Server{}, errors.New("backends_tls should not be enabled for vxlan protocol")
+		}
+		if server.Vxlan == nil {
+			server.Vxlan = &config.Udp{}
+		}
+		if server.Vxlan.MaxRequests == 0 && server.Vxlan.MaxResponses == 0 && server.ClientIdleTimeout == nil {
+			return config.Server{}, errors.New("vxlan protocol requires to specify at least one of client_idle_timeout")
+		}
+		if server.ClientIdleTimeout == nil || server.BackendIdleTimeout == nil {
+			return config.Server{}, errors.New("vxlan protocol server needs both client_idle_timeout and backend_idle_timeout")
+		}
+		fmt.Println("VXLAN Loaded Configuration:")
+		fmt.Println("MaxRequests:", server.Vxlan.MaxRequests)
+		fmt.Println("MaxResponses:", server.Vxlan.MaxResponses)
+		fmt.Println("ClientIdleTimeout:", *server.ClientIdleTimeout)
+		fmt.Println("BackendIdleTimeout:", *server.BackendIdleTimeout)
+	case "geneve":
+		if server.BackendsTls != nil {
+			return config.Server{}, errors.New("backends_tls should not be enabled for Geneve protocol")
+		}
+		if server.Geneve == nil {
+			server.Geneve = &config.Udp{}
+		}
+		if server.Geneve.MaxRequests == 0 && server.Geneve.MaxResponses == 0 && server.ClientIdleTimeout == nil {
+			return config.Server{}, errors.New("Geneve protocol requires to specify at least one of client_idle_timeout")
+		}
+		if server.ClientIdleTimeout == nil || server.BackendIdleTimeout == nil {
+			return config.Server{}, errors.New("Geneve protocol server needs both client_idle_timeout and backend_idle_timeout")
+		}
+		fmt.Println("Geneve Loaded Configuration:")
+		fmt.Println("MaxRequests:", server.Geneve.MaxRequests)
+		fmt.Println("MaxResponses:", server.Geneve.MaxResponses)
+		fmt.Println("ClientIdleTimeout:", *server.ClientIdleTimeout)
+		fmt.Println("BackendIdleTimeout:", *server.BackendIdleTimeout)
 	default:
 		return config.Server{}, errors.New("Not supported protocol " + server.Protocol)
 	}
@@ -492,9 +509,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 
 	/* Discovery */
 	switch server.Discovery.Failpolicy {
-	case
-		"keeplast",
-		"setempty":
+	case "keeplast", "setempty":
 	case "":
 		server.Discovery.Failpolicy = "keeplast"
 	default:
@@ -512,9 +527,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 	/* SRV Discovery */
 	if server.Discovery.Kind == "srv" {
 		switch server.Discovery.SrvDnsProtocol {
-		case
-			"udp",
-			"tcp":
+		case "udp", "tcp":
 		case "":
 			server.Discovery.SrvDnsProtocol = "udp"
 		default:
@@ -548,9 +561,7 @@ func prepareConfig(name string, server config.Server, defaults config.Connection
 		}
 
 		switch server.Discovery.LXDContainerAddressType {
-		case
-			"IPv4",
-			"IPv6":
+		case "IPv4", "IPv6":
 		case "":
 			server.Discovery.LXDContainerAddressType = "IPv4"
 		default:

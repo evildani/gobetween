@@ -10,14 +10,13 @@ import (
 	"errors"
 	"hash/fnv"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 /**
  * Iphash balancer
  */
-type Iphash1Balancer struct {
-}
+type Iphash1Balancer struct{}
 
 /**
  * Elect backend using semi-consistent iphash strategy. This is naive implementation
@@ -27,7 +26,6 @@ type Iphash1Balancer struct {
  *
  */
 func (b *Iphash1Balancer) Elect(context core.Context, backends []*core.Backend) (*core.Backend, error) {
-
 	if len(backends) == 0 {
 		return nil, errors.New("Can't elect backend, Backends empty")
 	}

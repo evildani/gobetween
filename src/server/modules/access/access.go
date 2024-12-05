@@ -10,7 +10,7 @@ import (
 	"errors"
 	"net"
 
-	"github.com/yyyar/gobetween/config"
+	"github.com/notional-labs/gobetween/src/config"
 )
 
 /**
@@ -25,7 +25,6 @@ type Access struct {
  * Creates new Access based on config
  */
 func NewAccess(cfg *config.AccessConfig) (*Access, error) {
-
 	if cfg == nil {
 		return nil, errors.New("AccessConfig is nil")
 	}
@@ -59,7 +58,6 @@ func NewAccess(cfg *config.AccessConfig) (*Access, error) {
  * Checks if ip is allowed
  */
 func (this *Access) Allows(ip *net.IP) bool {
-
 	for _, r := range this.Rules {
 		if r.Matches(ip) {
 			return r.Allows()

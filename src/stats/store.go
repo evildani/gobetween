@@ -22,7 +22,6 @@ var Store = struct {
  * Get stats for the server
  */
 func GetStats(name string) interface{} {
-
 	Store.RLock()
 	defer Store.RUnlock()
 

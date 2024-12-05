@@ -11,8 +11,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 const (
@@ -29,7 +29,6 @@ const (
  * dropping connection if timeout exceeded
  */
 func proxy(to net.Conn, from net.Conn, timeout time.Duration) <-chan core.ReadWriteCount {
-
 	log := logging.For("proxy")
 
 	stats := make(chan core.ReadWriteCount)
@@ -41,9 +40,8 @@ func proxy(to net.Conn, from net.Conn, timeout time.Duration) <-chan core.ReadWr
 
 	// Stats collecting goroutine
 	go func() {
-
 		if timeout > 0 {
-			from.SetReadDeadline(time.Now().Add(timeout))
+			from.SetReadDeadline(time.Now().Add(timeout)) //nolint:errcheck
 		}
 
 		for {
@@ -65,7 +63,7 @@ func proxy(to net.Conn, from net.Conn, timeout time.Duration) <-chan core.ReadWr
 				}
 
 				if timeout > 0 && rwc.CountRead > 0 {
-					from.SetReadDeadline(time.Now().Add(timeout))
+					from.SetReadDeadline(time.Now().Add(timeout)) //nolint:errcheck
 				}
 
 				// Remove non blocking
@@ -104,7 +102,6 @@ func proxy(to net.Conn, from net.Conn, timeout time.Duration) <-chan core.ReadWr
  * It's build by analogy of io.Copy
  */
 func Copy(to io.Writer, from io.Reader, ch chan<- core.ReadWriteCount) error {
-
 	buf := make([]byte, BUFFER_SIZE)
 	var err error = nil
 

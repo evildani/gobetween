@@ -27,7 +27,6 @@ type AccessRule struct {
  * Parses string to AccessRule
  */
 func ParseAccessRule(rule string) (*AccessRule, error) {
-
 	parts := strings.Split(rule, " ")
 	if len(parts) != 2 {
 		return nil, errors.New("Bad access rule format: " + rule)
@@ -63,14 +62,12 @@ func ParseAccessRule(rule string) (*AccessRule, error) {
 	}
 
 	return nil, errors.New("Cant parse acces rule target, not an ip or cidr: " + cidrOrIp)
-
 }
 
 /**
  * Checks if ip matches access rule
  */
 func (this *AccessRule) Matches(ip *net.IP) bool {
-
 	switch this.IsNetwork {
 	case true:
 		return this.Network.Contains(*ip)

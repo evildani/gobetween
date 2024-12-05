@@ -7,7 +7,7 @@ package cmd
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
+	"github.com/notional-labs/gobetween/src/config"
 )
 
 /**
@@ -20,5 +20,8 @@ var start func(*config.Config)
  */
 func Execute(f func(*config.Config)) {
 	start = f
-	RootCmd.Execute()
+	err := RootCmd.Execute()
+	if err != nil {
+		panic(err)
+	}
 }

@@ -9,8 +9,8 @@ package api
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 /* gin app */
@@ -27,8 +27,7 @@ func init() {
  * Starts REST API server
  */
 func Start(cfg config.ApiConfig) {
-
-	var log = logging.For("api")
+	log := logging.For("api")
 
 	if !cfg.Enabled {
 		log.Info("API disabled")

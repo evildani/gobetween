@@ -13,10 +13,10 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
 )
 
 const (
@@ -26,7 +26,6 @@ const (
 )
 
 func NewSrvDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	d := Discovery{
 		opts:  DiscoveryOpts{srvRetryWaitDuration},
 		fetch: srvFetch,
@@ -40,7 +39,6 @@ func NewSrvDiscovery(cfg config.DiscoveryConfig) interface{} {
  * Create new Discovery with Srv fetch func
  */
 func srvFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
-
 	log := logging.For("srvFetch")
 
 	log.Info("Fetching ", cfg.SrvLookupServer, " ", cfg.SrvLookupPattern)

@@ -2,26 +2,15 @@ ARG BASE_IMAGE=scratch
 
 # ---------------------  dev (build) image --------------------- #
 
-FROM golang:1.14-alpine as builder
+FROM golang:1.19 as builder
 
-RUN apk add git
-RUN apk add make
 
 RUN mkdir -p /opt/gobetween
 WORKDIR /opt/gobetween
 
-RUN mkdir ./src
-COPY ./src/go.mod ./src/go.mod
-COPY ./src/go.sum ./src/go.sum
-
-COPY go.mod .
-COPY go.sum .
-
-RUN go mod download
-
 COPY . .
 
-RUN make build-static
+RUN go build .
 
 # --------------------- final image --------------------- #
 
@@ -30,7 +19,7 @@ FROM $BASE_IMAGE
 WORKDIR /
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /opt/gobetween/bin/gobetween  .
+COPY --from=builder /opt/gobetween/gobetween  .
 
 CMD ["/gobetween", "-c", "/etc/gobetween/conf/gobetween.toml"]
 

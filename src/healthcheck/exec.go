@@ -9,17 +9,16 @@ package healthcheck
 import (
 	"time"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
 )
 
 /**
  * Exec healthcheck
  */
 func exec(t core.Target, cfg config.HealthcheckConfig, result chan<- CheckResult) {
-
 	log := logging.For("healthcheck/exec")
 
 	execTimeout, _ := time.ParseDuration(cfg.Timeout)

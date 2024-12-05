@@ -11,14 +11,14 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/yyyar/gobetween/api"
-	"github.com/yyyar/gobetween/cmd"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/info"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/manager"
-	"github.com/yyyar/gobetween/metrics"
-	"github.com/yyyar/gobetween/utils/codec"
+	"github.com/notional-labs/gobetween/src/api"
+	"github.com/notional-labs/gobetween/src/cmd"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/info"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/manager"
+	"github.com/notional-labs/gobetween/src/metrics"
+	"github.com/notional-labs/gobetween/src/utils/codec"
 )
 
 /**
@@ -34,7 +34,6 @@ var (
  * Initialize package
  */
 func init() {
-
 	// Set GOMAXPROCS if not set
 	if os.Getenv("GOMAXPROCS") == "" {
 		runtime.GOMAXPROCS(runtime.NumCPU())
@@ -48,14 +47,12 @@ func init() {
 	info.Revision = revision
 	info.Branch = branch
 	info.StartTime = time.Now()
-
 }
 
 /**
  * Entry point
  */
 func main() {
-
 	log.Printf("gobetween v%s", version)
 
 	env := os.Getenv("GOBETWEEN")
@@ -75,7 +72,6 @@ func main() {
 
 	// Process flags and start
 	cmd.Execute(func(cfg *config.Config) {
-
 		// Configure logging
 		logging.Configure(cfg.Logging.Output, cfg.Logging.Level, cfg.Logging.Format)
 

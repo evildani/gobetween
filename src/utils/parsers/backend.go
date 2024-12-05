@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 const (
@@ -31,12 +31,11 @@ func ParseBackendDefault(line string) (*core.Backend, error) {
  * Do parsing of backend line
  */
 func ParseBackend(line string, pattern string) (*core.Backend, error) {
-
-	//trim string
+	// trim string
 	line = strings.TrimSpace(line)
 
 	// parse string by regexp
-	var reg = regexp.MustCompile(pattern)
+	reg := regexp.MustCompile(pattern)
 	match := reg.FindStringSubmatch(line)
 
 	if len(match) == 0 {

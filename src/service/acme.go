@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/server/tcp"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/server/tcp"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -28,7 +28,6 @@ func init() {
 }
 
 func NewAcmeService(cfg config.Config) core.Service {
-
 	if cfg.Acme == nil {
 		return nil
 	}
@@ -52,17 +51,15 @@ func NewAcmeService(cfg config.Config) core.Service {
 		return fmt.Errorf("Acme: host %s is not configured", host)
 	}
 
-	//accept http challenge
+	// accept http challenge
 	if cfg.Acme.Challenge == "http" {
-		go http.ListenAndServe(cfg.Acme.HttpBind, a.certMan.HTTPHandler(nil))
+		go http.ListenAndServe(cfg.Acme.HttpBind, a.certMan.HTTPHandler(nil)) //nolint:errcheck
 	}
 
 	return a
-
 }
 
 func (a *AcmeService) Enable(server core.Server) error {
-
 	if a == nil {
 		return nil
 	}
@@ -97,7 +94,6 @@ func (a *AcmeService) Enable(server core.Server) error {
 }
 
 func (a *AcmeService) Disable(server core.Server) error {
-
 	serverCfg := server.Cfg()
 
 	if serverCfg.Tls == nil {

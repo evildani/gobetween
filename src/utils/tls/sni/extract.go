@@ -63,6 +63,6 @@ func (c bufferConn) SetWriteDeadline(t time.Time) error {
 func extractHostname(buf []byte) string {
 	conn := tls.Server(newBufferConn(buf), &tls.Config{})
 	defer conn.Close()
-	conn.Handshake()
+	conn.Handshake() //nolint:errcheck
 	return conn.ConnectionState().ServerName
 }

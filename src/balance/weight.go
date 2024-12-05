@@ -10,8 +10,8 @@ import (
 	"errors"
 	"math/rand"
 
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 /**
@@ -26,7 +26,6 @@ var log = logging.For("balance/weight")
  * See https://tools.ietf.org/html/rfc2782, Priority and Weight sections
  */
 func (b *WeightBalancer) Elect(context core.Context, backends []*core.Backend) (*core.Backend, error) {
-
 	if len(backends) == 0 {
 		return nil, errors.New("Can't elect backend, Backends empty")
 	}
@@ -46,12 +45,12 @@ func (b *WeightBalancer) Elect(context core.Context, backends []*core.Backend) (
 		}
 
 		if backend.Priority < 0 {
-			log.Warn("Ignoring invalid backend priority %v, should not be less than 0", backend.Priority)
+			log.Warn("Ignoring invalid backend priority backend priority, should not be less than 0", backend.Priority)
 			continue
 		}
 
 		if backend.Weight < 0 {
-			log.Warn("Ignoring invalid backend weight %v, should not be less than 0", backend.Weight)
+			log.Warn("Ignoring invalid backend weight backend weight, should not be less than 0", backend.Weight)
 			continue
 		}
 

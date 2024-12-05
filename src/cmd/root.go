@@ -8,10 +8,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/yyyar/gobetween/info"
-	"github.com/yyyar/gobetween/utils/pidfile"
 	"os"
+
+	"github.com/notional-labs/gobetween/src/info"
+	"github.com/notional-labs/gobetween/src/utils/pidfile"
+	"github.com/spf13/cobra"
 )
 
 /* Persistent parsed options */
@@ -55,14 +56,13 @@ var RootCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-
 		if showVersion {
 			fmt.Println(info.Version)
 			return
 		}
 
 		if configPath == "" {
-			cmd.Help()
+			cmd.Help() //nolint:errcheck
 			return
 		}
 

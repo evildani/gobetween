@@ -1,11 +1,20 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine)
 
+I have added two mayor support lines. It now performs the function of a vxlan load balancer, and a AWS Geneve receiver.
+The vxlan load balancing is 1:N where each backend vxlan receiver understands VXlan and the algorithm load balances based on original SRC/DST IP and SRC/DEST ports. The idea is that a single host can be send to the same vxlan receiver for proccessing.
+
+For Geneve, the same applies, but the backend is not Geneve its vxlan. AWS Implemenmtation of Geneve is not like on-prem, so keep in mind that.
+
+In the config folder there are 3 sample configurations.
+
+Please donate to the original authors of gobetween/ukranian relief efforts if you enjoy this fork. 
+
 <img src="/logo.png?raw=true" alt="gobetween" width="256px" />
 
-[![Tag](https://img.shields.io/github/tag/yyyar/gobetween.svg)](https://github.com/yyyar/gobetween/releases/latest)
+[![Tag](https://img.shields.io/github/tag/yyyar/gobetween.svg)](https://github.com/notional-labs/gobetween/releases/latest)
 [![Build Status](https://travis-ci.org/yyyar/gobetween.svg?branch=master)](https://travis-ci.org/yyyar/gobetween)
-[![Go Report Card](https://goreportcard.com/badge/github.com/yyyar/gobetween)](https://goreportcard.com/report/github.com/yyyar/gobetween)
-[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://github.com/yyyar/gobetween/wiki)
+[![Go Report Card](https://goreportcard.com/badge/github.com/notional-labs/gobetween)](https://goreportcard.com/report/github.com/notional-labs/gobetween)
+[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://github.com/notional-labs/gobetween/wiki)
 [![Docker](https://img.shields.io/docker/pulls/yyyar/gobetween.svg)](https://hub.docker.com/r/yyyar/gobetween/)
 [![Snap Status](https://build.snapcraft.io/badge/yyyar/gobetween.svg)](https://build.snapcraft.io/user/yyyar/gobetween)
 [![Telegram](https://img.shields.io/badge/telegram-chat-blue.svg)](https://t.me/joinchat/GdlUlg_gRfchk1BORU82PA)
@@ -14,29 +23,28 @@
 
 **gobetween** -  modern & minimalistic load balancer and reverse-proxy for the :cloud: Cloud era.
 
-Fork version of the original with some added features, sorry provided as is with no suport.
+**Current status**: *Maintenance mode, accepting PRs*. Currently in use in several highly loaded production environments.
 
 ## Features
 
-* [Fast L4 Load Balancing](https://github.com/yyyar/gobetween/wiki)
-  * **TCP** - with optional [The PROXY Protocol](https://github.com/yyyar/gobetween/wiki/Proxy-Protocol) support
-  * **TLS** - [TLS Termination](https://github.com/yyyar/gobetween/wiki/Protocols#tls) + [ACME](https://github.com/yyyar/gobetween/wiki/Protocols#tls) & [TLS Proxy](https://github.com/yyyar/gobetween/wiki/Tls-Proxying)
+* [Fast L4 Load Balancing](https://github.com/notional-labs/gobetween/wiki)
+  * **TCP** - with optional [The PROXY Protocol](https://github.com/notional-labs/gobetween/wiki/Proxy-Protocol) support
+  * **TLS** - [TLS Termination](https://github.com/notional-labs/gobetween/wiki/Protocols#tls) + [ACME](https://github.com/notional-labs/gobetween/wiki/Protocols#tls) & [TLS Proxy](https://github.com/notional-labs/gobetween/wiki/Tls-Proxying)
   * **UDP** - with optional virtual sessions and transparent mode
-  * **vxlan*** - 1 to many, Based on the original packet header load balance among many udp sockets that support vxlan
-  * **Geneve*** - 1 to many, AWS Geneve implementation receiver that will load balance among many vxlan sockets.
 
-* [Clear & Flexible Configuration](https://github.com/yyyar/gobetween/wiki/Configuration) with [TOML](config/gobetween.toml) or [JSON](config/gobetween.json)
+
+* [Clear & Flexible Configuration](https://github.com/notional-labs/gobetween/wiki/Configuration) with [TOML](config/gobetween.toml) or [JSON](config/gobetween.json)
   * **File** - read configuration from the file
   * **URL** - query URL by HTTP and get configuration from the response body 
   * **Consul** - query Consul key-value storage API for configuration
 
-* [Management REST API](https://github.com/yyyar/gobetween/wiki/REST-API)
+* [Management REST API](https://github.com/notional-labs/gobetween/wiki/REST-API)
   * **System Information** - general server info
   * **Configuration** - dump current config 
   * **Servers** - list, create & delete
   * **Stats & Metrics** - for servers and backends including rx/tx, status, active connections & etc.
  
-* [Discovery](https://github.com/yyyar/gobetween/wiki/Discovery)
+* [Discovery](https://github.com/notional-labs/gobetween/wiki/Discovery)
   * **Static** - hardcode backends list in the config file
   * **Docker** - query backends from Docker / Swarm API filtered by label
   * **Exec** - execute an arbitrary program and get backends from its stdout
@@ -46,12 +54,12 @@ Fork version of the original with some added features, sorry provided as is with
   * **Consul** - query Consul Services API for backends 
   * **LXD** - query backends from LXD
 
-* [Healthchecks](https://github.com/yyyar/gobetween/wiki/Healthchecks)
+* [Healthchecks](https://github.com/notional-labs/gobetween/wiki/Healthchecks)
   * **Ping** - simple TCP ping healthcheck
   * **Exec** - execute arbitrary program passing host & port as options, and read healthcheck status from the stdout
   * **Probe** - send specific bytes to backend (udp, tcp or tls) and expect a correct answer (bytes or regexp)
 
-* [Balancing Strategies](https://github.com/yyyar/gobetween/wiki/Balancing) (with [SNI](https://github.com/yyyar/gobetween/wiki/Server-Name-Indication) support)
+* [Balancing Strategies](https://github.com/notional-labs/gobetween/wiki/Balancing) (with [SNI](https://github.com/notional-labs/gobetween/wiki/Server-Name-Indication) support)
   * **Weight** - select backend from pool based relative weights of backends
   * **Roundrobin** - simple elect backend from pool in circular order
   * **Iphash** - route client to the same backend based on client ip hash
@@ -69,17 +77,13 @@ Fork version of the original with some added features, sorry provided as is with
 
 ## Usage
 
-* Install with snap: https://snapcraft.io/gobetween
-* [Other Installation Options](https://github.com/yyyar/gobetween/wiki/Installation)
-* [Read Configuration Reference](https://github.com/yyyar/gobetween/wiki)
+gobetween requires go 1.19+
+
+* Install go install github.com/notional-labs/gobetween@latest
+* [Other Installation Options](https://github.com/notional-labs/gobetween/wiki/Installation)
+* [Read Configuration Reference](https://github.com/notional-labs/gobetween/wiki)
 * Execute `gobetween --help` for full help on all available commands and options.
 
-## Hacking
-
-* Install Go 1.14+ https://golang.org/
-* `$ git clone git@github.com:yyyar/gobetween.git`
-* `$ make`
-* `$ make run`
 
 ### Debug and Test
 Run several web servers for tests in different terminals:
@@ -107,7 +111,7 @@ bind    = ":6060"  # "host:port"
 ```
 
 ## Performance
-It's Fast! See [Performance Testing](https://github.com/yyyar/gobetween/wiki/Performance-tests)
+It's Fast! See [Performance Testing](https://github.com/notional-labs/gobetween/wiki/Performance-tests)
 
 ## The Name
 It's a play on words: gobetween ("go between"). 

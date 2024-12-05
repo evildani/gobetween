@@ -10,16 +10,16 @@ package discovery
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/elgs/gojq"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
 )
 
 const (
@@ -36,7 +36,6 @@ const (
  * Create new Discovery with Json fetch func
  */
 func NewJsonDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	/* replace with defaults if needed */
 
 	if cfg.JsonHostPattern == "" {
@@ -72,7 +71,6 @@ func NewJsonDiscovery(cfg config.DiscoveryConfig) interface{} {
  * Fetch / refresh backends from URL with json in response
  */
 func jsonFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
-
 	log := logging.For("jsonFetch")
 
 	log.Info("fetching ", cfg.JsonEndpoint)
@@ -88,7 +86,7 @@ func jsonFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 	defer res.Body.Close()
 
 	// Read response
-	content, err := ioutil.ReadAll(res.Body)
+	content, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -102,14 +100,14 @@ func jsonFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 	// parse query to array to ensure right format and get length of it
 	parsedArray, err := parsed.QueryToArray(".")
 	if err != nil {
-		return nil, errors.New("Unexpected json in response")
+		return nil, errors.New("unexpected json in response")
 	}
 
 	var backends []core.Backend
 
 	for k := range parsedArray {
 
-		var key = "[" + strconv.Itoa(k) + "]."
+		key := "[" + strconv.Itoa(k) + "]."
 
 		backend := core.Backend{
 			Weight:   1,

@@ -7,17 +7,16 @@ package discovery
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils/parsers"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils/parsers"
 )
 
 /**
  * Creates new static discovery
  */
 func NewStaticDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	d := Discovery{
 		opts:  DiscoveryOpts{0},
 		cfg:   cfg,
@@ -31,7 +30,6 @@ func NewStaticDiscovery(cfg config.DiscoveryConfig) interface{} {
  * Start discovery
  */
 func staticFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
-
 	log := logging.For("discovery/static")
 
 	var backends []core.Backend

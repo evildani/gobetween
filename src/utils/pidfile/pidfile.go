@@ -2,7 +2,6 @@ package pidfile
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"syscall"
@@ -12,7 +11,7 @@ func WritePidFile(path string) error {
 	_, err := os.Stat(path)
 
 	if err == nil { // file already exists
-		data, err := ioutil.ReadFile(path)
+		data, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("Could not read %s: %v", path, err)
 		}
@@ -29,6 +28,5 @@ func WritePidFile(path string) error {
 		}
 	}
 
-	return ioutil.WriteFile(path, []byte(fmt.Sprintf("%d", os.Getpid())), 0664)
-
+	return os.WriteFile(path, []byte(fmt.Sprintf("%d", os.Getpid())), 0o664)
 }

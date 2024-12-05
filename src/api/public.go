@@ -6,15 +6,15 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 /**
  * Attaches / handlers
  */
 func attachPublic(app *gin.RouterGroup) {
-
 	/**
 	 * Simple 200 and OK response
 	 */

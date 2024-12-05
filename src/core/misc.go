@@ -10,7 +10,6 @@ package core
  * Next r/w operation data counters
  */
 type ReadWriteCount struct {
-
 	/* Read bytes count */
 	CountRead uint
 

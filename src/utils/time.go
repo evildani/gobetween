@@ -14,7 +14,6 @@ import (
  * Parse duration or return default
  */
 func ParseDurationOrDefault(s string, defaultDuration time.Duration) time.Duration {
-
 	var d time.Duration
 	var err error
 

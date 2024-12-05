@@ -17,10 +17,10 @@ import (
 	lxd_config "github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared"
 	lxd_api "github.com/lxc/lxd/shared/api"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
 )
 
 const (
@@ -32,7 +32,6 @@ const (
  * Create new Discovery with LXD fetch func
  */
 func NewLXDDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	d := Discovery{
 		opts:  DiscoveryOpts{lxdRetryWaitDuration},
 		fetch: lxdFetch,
@@ -190,12 +189,12 @@ func lxdBuildClient(cfg config.DiscoveryConfig) (lxd.ContainerServer, error) {
 					log.Debug("Retrieving LXD server certificate")
 					err := lxdGetRemoteCertificate(lxdConfig, cfg.LXDServerRemoteName)
 					if err != nil {
-						return nil, fmt.Errorf("Could obtain LXD server certificate: %s", err)
+						return nil, fmt.Errorf("could obtain LXD server certificate: %s", err)
 					}
 				} else {
-					err := fmt.Errorf("Unable to communicate with LXD server. Either set " +
+					err := fmt.Errorf("unable to communicate with LXD server. Either set " +
 						"lxd_accept_server_cert to true or add the LXD server out of " +
-						"band of gobetween and try again.")
+						"band of gobetween and try again")
 					return nil, err
 				}
 			}
@@ -258,9 +257,10 @@ func lxdBuildConfig(cfg config.DiscoveryConfig) (*lxd_config.Config, error) {
 	return config, nil
 }
 
-/**
-* lxdGetRemoteCertificate will attempt to retrieve a remote LXD server's
-  certificate and save it to the servercert's path.
+/*
+*
+  - lxdGetRemoteCertificate will attempt to retrieve a remote LXD server's
+    certificate and save it to the servercert's path.
 */
 func lxdGetRemoteCertificate(config *lxd_config.Config, remote string) error {
 	addr := config.Remotes[remote]
@@ -271,8 +271,8 @@ func lxdGetRemoteCertificate(config *lxd_config.Config, remote string) error {
 	}
 
 	serverCertDir := config.ConfigPath("servercerts")
-	if err := os.MkdirAll(serverCertDir, 0750); err != nil {
-		return fmt.Errorf("Could not create server cert dir: %s", err)
+	if err := os.MkdirAll(serverCertDir, 0o750); err != nil {
+		return fmt.Errorf("could not create server cert dir: %s", err)
 	}
 
 	certf := fmt.Sprintf("%s/%s.crt", serverCertDir, remote)
@@ -281,7 +281,10 @@ func lxdGetRemoteCertificate(config *lxd_config.Config, remote string) error {
 		return err
 	}
 
-	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certificate.Raw})
+	err = pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: certificate.Raw})
+	if err != nil {
+		return err
+	}
 	certOut.Close()
 
 	return nil
@@ -295,6 +298,9 @@ func lxdAuthenticateToServer(client lxd.ContainerServer, remote string, password
 	if srv.Auth == "trusted" {
 		return nil
 	}
+	if err != nil {
+		return err
+	}
 
 	req := lxd_api.CertificatesPost{
 		Password: password,
@@ -303,7 +309,7 @@ func lxdAuthenticateToServer(client lxd.ContainerServer, remote string, password
 
 	err = client.CreateCertificate(req)
 	if err != nil {
-		return fmt.Errorf("Unable to authenticate with remote server: %s", err)
+		return fmt.Errorf("unable to authenticate with remote server: %s", err)
 	}
 
 	_, _, err = client.GetServer()
@@ -353,7 +359,7 @@ func lxdDetermineContainerIP(client lxd.ContainerServer, container, iface, addrT
 	}
 
 	if containerIP == "" {
-		return "", fmt.Errorf("Unable to determine IP address for LXD container %s", container)
+		return "", fmt.Errorf("unable to determine IP address for LXD container %s", container)
 	}
 
 	return containerIP, nil

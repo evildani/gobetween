@@ -9,9 +9,9 @@ package healthcheck
 import (
 	"time"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 /**
@@ -20,7 +20,6 @@ import (
  * and yields results on change
  */
 type Worker struct {
-
 	/* Target to monitor and check */
 	target core.Target
 
@@ -50,7 +49,6 @@ type Worker struct {
  * Start worker
  */
 func (this *Worker) Start() {
-
 	log := logging.For("healthcheck/worker")
 
 	// Special case for no healthcheck, don't actually start worker
@@ -83,7 +81,7 @@ func (this *Worker) Start() {
 			/* request to stop worker */
 			case <-this.stop:
 				ticker.Stop()
-				//close(c) // TODO: Check!
+				// close(c) // TODO: Check!
 				return
 			}
 		}
@@ -96,7 +94,6 @@ func (this *Worker) Start() {
  * sending updated check result to out
  */
 func (this *Worker) process(checkResult CheckResult) {
-
 	log := logging.For("healthcheck/worker")
 
 	if checkResult.Status == this.LastResult.Status {

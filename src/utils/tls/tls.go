@@ -9,9 +9,9 @@ package tls
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"io/ioutil"
+	"os"
 
-	"github.com/yyyar/gobetween/config"
+	"github.com/notional-labs/gobetween/src/config"
 )
 
 /**
@@ -41,7 +41,6 @@ var suites map[string]uint16 = map[string]uint16{
  * TLS Versions mappings
  */
 var versions map[string]uint16 = map[string]uint16{
-	"ssl3":   tls.VersionSSL30,
 	"tls1":   tls.VersionTLS10,
 	"tls1.1": tls.VersionTLS11,
 	"tls1.2": tls.VersionTLS12,
@@ -58,8 +57,7 @@ func MapVersion(version string) uint16 {
  * Maps tls ciphers from array of strings to array of golang constants
  */
 func MapCiphers(ciphers []string) []uint16 {
-
-	if ciphers == nil || len(ciphers) == 0 {
+	if len(ciphers) == 0 {
 		return nil
 	}
 
@@ -77,7 +75,6 @@ func MapCiphers(ciphers []string) []uint16 {
 }
 
 func MakeTlsConfig(tlsC *config.Tls, getCertificate func(*tls.ClientHelloInfo) (*tls.Certificate, error)) (*tls.Config, error) {
-
 	if tlsC == nil {
 		return nil, nil
 	}
@@ -85,7 +82,6 @@ func MakeTlsConfig(tlsC *config.Tls, getCertificate func(*tls.ClientHelloInfo) (
 	tlsConfig := &tls.Config{}
 
 	tlsConfig.CipherSuites = MapCiphers(tlsC.Ciphers)
-	tlsConfig.PreferServerCipherSuites = tlsC.PreferServerCiphers
 	tlsConfig.MinVersion = MapVersion(tlsC.MinVersion)
 	tlsConfig.MaxVersion = MapVersion(tlsC.MaxVersion)
 	tlsConfig.SessionTicketsDisabled = !tlsC.SessionTickets
@@ -110,7 +106,6 @@ func MakeTlsConfig(tlsC *config.Tls, getCertificate func(*tls.ClientHelloInfo) (
  * MakeBackendTLSConfig makes a tls.Config for connecting to backends
  */
 func MakeBackendTLSConfig(backendsTls *config.BackendsTls) (*tls.Config, error) {
-
 	if backendsTls == nil {
 		return nil, nil
 	}
@@ -141,7 +136,7 @@ func MakeBackendTLSConfig(backendsTls *config.BackendsTls) (*tls.Config, error) 
 
 		var caCertPem []byte
 
-		if caCertPem, err = ioutil.ReadFile(*backendsTls.RootCaCertPath); err != nil {
+		if caCertPem, err = os.ReadFile(*backendsTls.RootCaCertPath); err != nil {
 			return nil, err
 		}
 
@@ -155,5 +150,4 @@ func MakeBackendTLSConfig(backendsTls *config.BackendsTls) (*tls.Config, error) 
 	}
 
 	return result, nil
-
 }

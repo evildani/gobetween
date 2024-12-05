@@ -8,16 +8,16 @@ package discovery
  */
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
-	"github.com/yyyar/gobetween/utils/parsers"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
+	"github.com/notional-labs/gobetween/src/utils/parsers"
 )
 
 const (
@@ -29,7 +29,6 @@ const (
  * Create new Discovery with Plaintext fetch func
  */
 func NewPlaintextDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	if cfg.PlaintextRegexpPattern == "" {
 		cfg.PlaintextRegexpPattern = parsers.DEFAULT_BACKEND_PATTERN
 	}
@@ -47,7 +46,6 @@ func NewPlaintextDiscovery(cfg config.DiscoveryConfig) interface{} {
  * Fetch / refresh backends from URL with plain text
  */
 func plaintextFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
-
 	log := logging.For("plaintextFetch")
 
 	log.Info("Fetching ", cfg.PlaintextEndpoint)
@@ -63,7 +61,7 @@ func plaintextFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 	defer res.Body.Close()
 
 	// Read response
-	content, err := ioutil.ReadAll(res.Body)
+	content, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}

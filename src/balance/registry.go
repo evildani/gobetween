@@ -9,9 +9,9 @@ package balance
 import (
 	"reflect"
 
-	"github.com/yyyar/gobetween/balance/middleware"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/balance/middleware"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 /**

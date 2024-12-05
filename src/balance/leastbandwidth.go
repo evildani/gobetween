@@ -9,7 +9,7 @@ package balance
 import (
 	"errors"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 /**
@@ -21,7 +21,6 @@ type LeastbandwidthBalancer struct{}
  * Elect backend using leastbandwidth strategy
  */
 func (b *LeastbandwidthBalancer) Elect(context core.Context, backends []*core.Backend) (*core.Backend, error) {
-
 	if len(backends) == 0 {
 		return nil, errors.New("Can't elect backend, Backends empty")
 	}

@@ -48,7 +48,6 @@ func (this *Backend) EqualTo(other Backend) bool {
  * Merge another backend to this one
  */
 func (this *Backend) MergeFrom(other Backend) *Backend {
-
 	this.Priority = other.Priority
 	this.Weight = other.Weight
 	this.Sni = other.Sni

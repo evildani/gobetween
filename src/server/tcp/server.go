@@ -11,19 +11,19 @@ import (
 	"net"
 	"time"
 
-	"github.com/yyyar/gobetween/balance"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/discovery"
-	"github.com/yyyar/gobetween/healthcheck"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/server/modules/access"
-	"github.com/yyyar/gobetween/server/scheduler"
-	"github.com/yyyar/gobetween/stats"
-	"github.com/yyyar/gobetween/utils"
-	"github.com/yyyar/gobetween/utils/proxyprotocol"
-	tlsutil "github.com/yyyar/gobetween/utils/tls"
-	"github.com/yyyar/gobetween/utils/tls/sni"
+	"github.com/notional-labs/gobetween/src/balance"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/discovery"
+	"github.com/notional-labs/gobetween/src/healthcheck"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/server/modules/access"
+	"github.com/notional-labs/gobetween/src/server/scheduler"
+	"github.com/notional-labs/gobetween/src/stats"
+	"github.com/notional-labs/gobetween/src/utils"
+	"github.com/notional-labs/gobetween/src/utils/proxyprotocol"
+	tlsutil "github.com/notional-labs/gobetween/src/utils/tls"
+	"github.com/notional-labs/gobetween/src/utils/tls/sni"
 )
 
 /**
@@ -31,7 +31,6 @@ import (
  * proxies it to backends
  */
 type Server struct {
-
 	/* Server friendly name */
 	name string
 
@@ -80,10 +79,8 @@ type Server struct {
  * Creates new server instance
  */
 func New(name string, cfg config.Server) (*Server, error) {
-
 	log := logging.For("server")
 
-	var err error = nil
 	statsHandler := stats.NewHandler(name)
 
 	// Create server
@@ -105,6 +102,7 @@ func New(name string, cfg config.Server) (*Server, error) {
 
 	/* Add access if needed */
 	if cfg.Access != nil {
+		var err error
 		server.access, err = access.NewAccess(cfg.Access)
 		if err != nil {
 			return nil, err
@@ -113,6 +111,7 @@ func New(name string, cfg config.Server) (*Server, error) {
 
 	/* Add tls configs if needed */
 
+	var err error
 	server.backendsTlsConfg, err = tlsutil.MakeBackendTLSConfig(cfg.BackendsTls)
 	if err != nil {
 		return nil, err
@@ -134,7 +133,6 @@ func (this *Server) Cfg() config.Server {
  * Start server
  */
 func (this *Server) Start() error {
-
 	var err error
 	this.tlsConfig, err = tlsutil.MakeTlsConfig(this.cfg.Tls, this.GetCertificate)
 	if err != nil {
@@ -142,7 +140,6 @@ func (this *Server) Start() error {
 	}
 
 	go func() {
-
 		for {
 			select {
 			case client := <-this.disconnect:
@@ -215,7 +212,6 @@ func (this *Server) HandleClientConnect(ctx *core.TcpContext) {
  * Stop, dropping all connections
  */
 func (this *Server) Stop() {
-
 	log := logging.For("server.Listen")
 	log.Info("Stopping ", this.name)
 
@@ -246,17 +242,15 @@ func (this *Server) wrap(conn net.Conn, sniEnabled bool) {
 	}
 
 	this.connect <- &core.TcpContext{
-		hostname,
-		conn,
+		Hostname: hostname,
+		Conn:     conn,
 	}
-
 }
 
 /**
  * Listen on specified port for a connections
  */
 func (this *Server) Listen() (err error) {
-
 	log := logging.For("server.Listen")
 
 	// create tcp listener
@@ -272,7 +266,6 @@ func (this *Server) Listen() (err error) {
 	go func() {
 		for {
 			conn, err := this.listener.Accept()
-
 			if err != nil {
 				log.Error(err)
 				return
@@ -318,7 +311,6 @@ func (this *Server) handle(ctx *core.TcpContext) {
 		backendConn, err = tls.DialWithDialer(&net.Dialer{
 			Timeout: utils.ParseDurationOrDefault(*this.cfg.BackendConnectionTimeout, 0),
 		}, "tcp", backend.Address(), this.backendsTlsConfg)
-
 	} else {
 		backendConn, err = net.DialTimeout("tcp", backend.Address(), utils.ParseDurationOrDefault(*this.cfg.BackendConnectionTimeout, 0))
 	}

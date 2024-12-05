@@ -9,7 +9,7 @@ package counters
 import (
 	"time"
 
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 const (
@@ -21,7 +21,6 @@ const (
  * Bandwidth counter for backends pool
  */
 type BackendsBandwidthCounter struct {
-
 	/* Map of counters of specific targets */
 	counters map[core.Target]*BandwidthCounter
 
@@ -57,7 +56,6 @@ func NewBackendsBandwidthCounter() *BackendsBandwidthCounter {
  * Start backends counter
  */
 func (this *BackendsBandwidthCounter) Start() {
-
 	go func() {
 		for {
 			select {
@@ -90,7 +88,6 @@ func (this *BackendsBandwidthCounter) Start() {
 					counter.Traffic <- rwc
 				}
 			}
-
 		}
 	}()
 }
@@ -100,7 +97,6 @@ func (this *BackendsBandwidthCounter) Start() {
  * and deleting old counters
  */
 func (this *BackendsBandwidthCounter) UpdateCounters(targets []core.Target) {
-
 	result := map[core.Target]*BandwidthCounter{}
 
 	// Keep or add needed workers

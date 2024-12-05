@@ -2,7 +2,7 @@
 
 ## Reporting bugs and proposals
 
-You can [submit an issue](https://github.com/yyyar/gobetween/issues/new). Please be descriptive and provide as much evidence 
+You can [submit an issue](https://github.com/notional-labs/gobetween/issues/new). Please be descriptive and provide as much evidence 
 as you can, so that we could either help you to fix your setup, or reproduce the issue on our side. This includes config of 
 gobetween, logs, expected behavior and actual behavior, steps to reproduce. 
 
@@ -11,7 +11,7 @@ security tokens and other information that you don't want to make public.
 
 ## Submitting changes
 
-Please send a [GitHub Pull Request to gobetween](https://github.com/yyyar/gobetween/pull/new/master) with a clear description 
+Please send a [GitHub Pull Request to gobetween](https://github.com/notional-labs/gobetween/pull/new/master) with a clear description 
 of what you've done. Please make sure all your commits are atomic (one feature per commit). Please follow our coding conventions
 
   * Prior to submitting PR, make an issue with a question. It could save a lot of time and efforts because we could be already

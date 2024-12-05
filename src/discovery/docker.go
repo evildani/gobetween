@@ -13,10 +13,10 @@ import (
 	"time"
 
 	docker "github.com/fsouza/go-dockerclient"
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
-	"github.com/yyyar/gobetween/utils"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
+	"github.com/notional-labs/gobetween/src/utils"
 )
 
 const (
@@ -28,7 +28,6 @@ const (
  * Create new Discovery with Docker fetch func
  */
 func NewDockerDiscovery(cfg config.DiscoveryConfig) interface{} {
-
 	d := Discovery{
 		opts:  DiscoveryOpts{dockerRetryWaitDuration},
 		fetch: dockerFetch,
@@ -42,7 +41,6 @@ func NewDockerDiscovery(cfg config.DiscoveryConfig) interface{} {
  * Fetch backends from Docker API
  */
 func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
-
 	log := logging.For("dockerFetch")
 
 	log.Info("Fetching ", cfg.DockerEndpoint, " ", cfg.DockerContainerLabel, " ", cfg.DockerContainerPrivatePort)
@@ -55,7 +53,7 @@ func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 		// Client cert and key files should be specified together (or both not specified)
 		// Ca cert may be not specified, so not checked here
 		if (cfg.DockerTlsCertPath == "") != (cfg.DockerTlsKeyPath == "") {
-			return nil, errors.New("Missing key or certificate required for TLS client validation")
+			return nil, errors.New("missing key or certificate required for TLS client validation")
 		}
 
 		client, err = docker.NewTLSClient(cfg.DockerEndpoint, cfg.DockerTlsCertPath, cfg.DockerTlsKeyPath, cfg.DockerTlsCacertPath)
@@ -74,7 +72,7 @@ func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 	/* Add filter labels if any */
 	var filters map[string][]string
 	if cfg.DockerContainerLabel != "" {
-		filters = map[string][]string{"label": []string{cfg.DockerContainerLabel}}
+		filters = map[string][]string{"label": {cfg.DockerContainerLabel}}
 	}
 
 	/* Fetch containers */
@@ -95,7 +93,10 @@ func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 			}
 
 			containerHost := dockerDetermineContainerHost(client, container.ID, cfg, port.IP)
-
+			//fmt.Println("containerHost: ", containerHost)
+			if containerHost != "0.0.0.0" {
+				continue
+			}
 			backends = append(backends, core.Backend{
 				Target: core.Target{
 					Host: containerHost,
@@ -110,7 +111,7 @@ func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
 			})
 		}
 	}
-
+	fmt.Println("Docker containers:", backends)
 	return &backends, nil
 }
 
@@ -118,14 +119,13 @@ func dockerFetch(cfg config.DiscoveryConfig) (*[]core.Backend, error) {
  * Determines container host
  */
 func dockerDetermineContainerHost(client *docker.Client, id string, cfg config.DiscoveryConfig, portHost string) string {
-
 	log := logging.For("dockerDetermineContainerHost")
 
 	/* If host env var specified, try to get it from container vars */
 
 	if cfg.DockerContainerHostEnvVar != "" {
 
-		container, err := client.InspectContainer(id)
+		container, err := client.InspectContainer(id) //nolint:staticcheck // if this gives us container problems we should update it.
 
 		if err != nil {
 			log.Warn(err)
@@ -146,7 +146,7 @@ func dockerDetermineContainerHost(client *docker.Client, id string, cfg config.D
 
 	/* Last chance, try to parse docker host from endpoint string */
 
-	var reg = regexp.MustCompile("(.*?)://(?P<host>[-.A-Za-z0-9]+)/?(.*)")
+	reg := regexp.MustCompile("(.*?)://(?P<host>[-.A-Za-z0-9]+)/?(.*)")
 	match := reg.FindStringSubmatch(cfg.DockerEndpoint)
 
 	if len(match) == 0 {

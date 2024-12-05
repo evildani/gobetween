@@ -7,12 +7,11 @@ package stats
  */
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/metrics"
-	"github.com/yyyar/gobetween/stats/counters"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/metrics"
+	"github.com/notional-labs/gobetween/src/stats/counters"
 )
 
 const (
@@ -24,7 +23,6 @@ const (
  * Handler processess data from server
  */
 type Handler struct {
-
 	/* Server's name */
 	Name string
 
@@ -59,7 +57,6 @@ type Handler struct {
  * with name 'name'
  */
 func NewHandler(name string) *Handler {
-
 	handler := &Handler{
 		Name:        name,
 		ServerStats: make(chan counters.BandwidthStats, 1),
@@ -90,12 +87,10 @@ func NewHandler(name string) *Handler {
  * Start handler work asynchroniously
  */
 func (this *Handler) Start() {
-
 	this.serverCounter.Start()
 	this.BackendsCounter.Start()
 
 	go func() {
-
 		for {
 			select {
 
@@ -122,7 +117,7 @@ func (this *Handler) Start() {
 				this.latestStats.RxSecond = b.RxSecond
 				this.latestStats.TxSecond = b.TxSecond
 
-				metrics.ReportHandleStatsChange(fmt.Sprintf("%s", this.Name), b)
+				metrics.ReportHandleStatsChange(this.Name, b)
 
 			/* New server backends with stats available */
 			case backends := <-this.Backends:
@@ -132,7 +127,7 @@ func (this *Handler) Start() {
 			case connections := <-this.Connections:
 				this.latestStats.ActiveConnections = connections
 
-				metrics.ReportHandleConnectionsChange(fmt.Sprintf("%s", this.Name), connections)
+				metrics.ReportHandleConnectionsChange(this.Name, connections)
 
 			/* New traffic stats available */
 			case rwc := <-this.Traffic:
@@ -144,7 +139,6 @@ func (this *Handler) Start() {
 			}
 		}
 	}()
-
 }
 
 /**

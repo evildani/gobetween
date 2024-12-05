@@ -28,13 +28,12 @@ func init() {
  * Configure logging
  */
 func Configure(output string, l string, format string) {
-
 	if output == "" || output == "stdout" {
 		logrus.SetOutput(os.Stdout)
 	} else if output == "stderr" {
 		logrus.SetOutput(os.Stderr)
 	} else {
-		f, err := os.OpenFile(output, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
+		f, err := os.OpenFile(output, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0o755)
 		if err != nil {
 			logrus.Fatal(err)
 		}

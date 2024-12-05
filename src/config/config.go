@@ -120,6 +120,12 @@ type Server struct {
 	// Optional configuration for protocol = udp
 	Udp *Udp `toml:"udp" json:"udp"`
 
+	// Optional configuration for protocol = vxlan
+	Vxlan *Udp `toml:"vxlan" json:"vxlan"`
+
+	// Optional configuration for protocol = geneve
+	Geneve *Udp `toml:"geneve" json:"geneve"`
+
 	// Access configuration
 	Access *AccessConfig `toml:"access" json:"access"`
 
@@ -187,6 +193,7 @@ type Udp struct {
 	MaxRequests  uint64 `toml:"max_requests" json:"max_requests"`
 	MaxResponses uint64 `toml:"max_responses" json:"max_responses"`
 	Transparent  bool   `toml:"transparent" json:"transparent"`
+	Source       string `toml:"source" json:"source"`
 }
 
 /**

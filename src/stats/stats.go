@@ -7,14 +7,13 @@ package stats
  */
 
 import (
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 /**
  * Stats of the Server
  */
 type Stats struct {
-
 	/* Current active client connections */
 	ActiveConnections uint `json:"active_connections"`
 

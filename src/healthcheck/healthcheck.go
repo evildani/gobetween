@@ -7,8 +7,8 @@ package healthcheck
  */
 
 import (
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
 )
 
 /**
@@ -30,7 +30,6 @@ const (
  * Handles target and it's live status
  */
 type CheckResult struct {
-
 	/* Check target */
 	Target core.Target
 
@@ -42,7 +41,6 @@ type CheckResult struct {
  * Healthcheck
  */
 type Healthcheck struct {
-
 	/* Healthcheck function */
 	check CheckFunc
 
@@ -81,7 +79,6 @@ func init() {
  * Create new Discovery based on strategy
  */
 func New(strategy string, cfg config.HealthcheckConfig) *Healthcheck {
-
 	check := registry[strategy]
 
 	/* Create healthcheck */
@@ -102,7 +99,6 @@ func New(strategy string, cfg config.HealthcheckConfig) *Healthcheck {
  * Start healthcheck
  */
 func (this *Healthcheck) Start() {
-
 	go func() {
 		for {
 			select {
@@ -133,7 +129,6 @@ func (this *Healthcheck) Start() {
  * Will remove not needed workers, and add needed
  */
 func (this *Healthcheck) UpdateWorkers(targets []core.Target) {
-
 	result := []*Worker{}
 
 	// Keep or add needed workers
@@ -180,7 +175,6 @@ func (this *Healthcheck) UpdateWorkers(targets []core.Target) {
 	}
 
 	this.workers = result
-
 }
 
 func (this *Healthcheck) HasCheck() bool {

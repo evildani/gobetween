@@ -1,0 +1,38 @@
+# gobetween.toml - salt test config file
+#
+
+[logging]
+level = "debug"    # "debug" | "info" | "warn" | "error"
+output = "stdout" # "stdout" | "stderr" | "/path/to/gobetween.log"
+format = "text"   # (optional) "text" | "json"
+
+[profiler]
+enabled = false
+bind = ":6060"
+
+
+[api]
+enabled = true
+bind = ":8888"
+cors = false
+    [api.basic_auth]
+    login = "admin"
+    password = "1111"
+
+
+[servers.geneve]
+protocol = "geneve"
+bind = "0.0.0.0:6081"
+max_connections = 0              # Maximum simultaneous connections to the server
+client_idle_timeout =  "30000000000"        # Client inactivity duration before forced connection drop
+backend_idle_timeout = "30000000000"       # Backend inactivity duration before forced connection drop
+backend_connection_timeout = "1000000" # Backend connection timeout (ignored in udp)
+
+    [servers.geneve.discovery]
+    kind = "docker"
+    docker_endpoint = "unix:///var/run/docker.sock" # (required) Endpoint to docker API
+    docker_container_private_port = 4789
+    [servers.geneve.geneve]             # (optional)
+    max_requests  = 0                 # (optional) if > 0 accepts no more requests than max_requests and closes session
+    max_responses = 0                 # (optional) if > 0 accepts no more responses than max_responses from backend and closes session
+    transparent = false               # (optional, not supported in Windows)

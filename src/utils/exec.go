@@ -11,14 +11,13 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 /**
  * Exec with timeout
  */
 func ExecTimeout(timeout time.Duration, params ...string) (string, error) {
-
 	log := logging.For("execTimeout")
 
 	cmd := exec.Command(params[0], params[1:]...)
@@ -26,7 +25,8 @@ func ExecTimeout(timeout time.Duration, params ...string) (string, error) {
 	timer := time.AfterFunc(timeout, func() {
 		if cmd.Process != nil {
 			log.Info("Response from exec ", params, " is timed out. Killing process...")
-			cmd.Process.Kill()
+			cmd.Process.Kill() //nolint:errcheck
+
 		}
 	})
 

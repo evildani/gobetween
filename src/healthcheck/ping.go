@@ -10,16 +10,15 @@ import (
 	"net"
 	"time"
 
-	"github.com/yyyar/gobetween/config"
-	"github.com/yyyar/gobetween/core"
-	"github.com/yyyar/gobetween/logging"
+	"github.com/notional-labs/gobetween/src/config"
+	"github.com/notional-labs/gobetween/src/core"
+	"github.com/notional-labs/gobetween/src/logging"
 )
 
 /**
  * Ping healthcheck
  */
 func ping(t core.Target, cfg config.HealthcheckConfig, result chan<- CheckResult) {
-
 	pingTimeoutDuration, _ := time.ParseDuration(cfg.Timeout)
 
 	log := logging.For("healthcheck/ping")
